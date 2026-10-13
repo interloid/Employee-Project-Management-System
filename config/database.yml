@@ -14,12 +14,18 @@ default: &default
   encoding: utf8mb4
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: root
-  password:
+  password: Sathees@2004
   socket: /var/run/mysqld/mysqld.sock
 
 development:
-  <<: *default
-  database: employee_project_management_system_development
+  primary:
+    <<: *default
+    database: employee_project_management_system_development
+
+  queue:
+    <<: *default
+    database: employee_project_management_system_development_queue
+    migrations_paths: db/queue_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -54,21 +60,33 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+
 production:
-  primary: &primary_production
-    <<: *default
-    database: employee_project_management_system_production
-    username: employee_project_management_system
-    password: <%= ENV["EMPLOYEE_PROJECT_MANAGEMENT_SYSTEM_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: employee_project_management_system_production_cache
-    migrations_paths: db/cache_migrate
+  primary:
+    url: <%= ENV["JAWSDB_URL"] %>
+    adapter: mysql2
+    encoding: utf8mb4
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
   queue:
-    <<: *primary_production
-    database: employee_project_management_system_production_queue
+    url: <%= ENV["JAWSDB_URL"] %>
+    adapter: mysql2
+    encoding: utf8mb4
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
     migrations_paths: db/queue_migrate
+
   cable:
-    <<: *primary_production
-    database: employee_project_management_system_production_cable
+    url: <%= ENV["JAWSDB_URL"] %>
+    adapter: mysql2
+    encoding: utf8mb4
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
     migrations_paths: db/cable_migrate
+  cache:
+    url: <%= ENV["JAWSDB_URL"] %>
+    adapter: mysql2
+    encoding: utf8mb4
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    migrations_paths: db/cache_migrate
+
+
+
